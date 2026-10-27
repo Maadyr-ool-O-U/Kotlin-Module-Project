@@ -1,9 +1,11 @@
 fun openNoteMenu(archive: Archive) {
     while (true) {
         val menuItems = mutableListOf<MenuItem>()
-        menuItems.add(MenuItem("Создать заметку") { createNote(archive) })
 
-        archive.notes.forEach { note ->
+        val currentArchive = archiveList.find { it.name == archive.name } ?: archive
+        menuItems.add(MenuItem("Создать заметку") { createNote(currentArchive) })
+
+        currentArchive.notes.forEach { note ->
             menuItems.add(MenuItem("Посмотреть заметку: ${note.title}") {
                 showNoteContent(note)
             })
@@ -18,32 +20,20 @@ fun openNoteMenu(archive: Archive) {
 }
 
 fun createNote(archive: Archive) {
-    var title: String
-    var content: String
-
-    while (true) {
-        println("\nВведите заголовок заметки:")
-        title = scanner.nextLine().trim()
-        if (title.isEmpty()) {
-            println("Ошибка: Заголовок не может быть пустым!")
-            continue
-        }
-        break
-    }
-
-    while (true) {
-        println("Введите текст заметки:")
-        content = scanner.nextLine().trim()
-        if (content.isEmpty()) {
-            println("Ошибка: Текст заметки не может быть пустым!")
-            continue
-        }
-        break
-    }
+    val title = readNonEmptyString("\nВведите заголовок заметки:")
+    val content = readNonEmptyString("Введите текст заметки:")
 
     val newNote = Note(title, content)
-    archive.notes.add(newNote)
-    println("Успешно: Заметка '${title}' добавлена в архив '${archive.name}'!")
+
+    val index = archiveList.indexOfFirst { it.name ==archive.name }
+
+    if (index != -1) {
+        val updatedArchive = archiveList[index].copy(notes = archiveList[index].notes + newNote)
+        archiveList[index] = updatedArchive
+        println("Успешно: Заметка '${title}' добавлена в архив '${archive.name}'!")
+    } else {
+        println("Ошибка: Архив не найден.")
+    }
 }
 
 fun showNoteContent(note: Note) {

@@ -21,16 +21,8 @@ fun openArchiveMenu() {
 }
 
 fun createArchive() {
-    while (true) {
-        println("\nВведите название для нового архива:")
-        val name = scanner.nextLine().trim()
-        if (name.isEmpty()) {
-            println("Ошибка: Имя архива не может быть пустым.")
-            continue
-        }
-        val newArchive = Archive(name)
-        archiveList.add(newArchive)
-        println("Успешно: Архив '$name' создан!")
-        break
-    }
+    val name = readNonEmptyString("\nВведите название для нового архива:")
+    val newArchive = Archive(name)
+    archiveList.add(newArchive)
+    println("Успешно: Архив '$name' создан!")
 }
